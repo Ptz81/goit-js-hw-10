@@ -10,19 +10,23 @@ const inputElem = document.querySelector('#search-box');
 const countryListElem = document.querySelector('.country-list');
 const countryInfoElem = document.querySelector('.country-info');
 
-inputElem.addEventListener('input', debounce(handlerCountrySearch, DEBOUNCE_DELAY)),
+inputElem.addEventListener('input', debounce(handlerCountrySearch, DEBOUNCE_DELAY, { trailing: true })),
 
   function handlerCountrySearch(e) {
     e.preventDefault();
 
     const searchedCountry = e.target.value.trim();
-    if (searchedCountry === '') {
+
+    if (searchedCountry == '') {
+      countryListElem.innerHTML = '';
+      countryInfoElem.innerHTML = '';
       return
     }
+
     fetchCountries(searchedCountry)
       .then(result => {
-      if (result.lenght > 10) {
-        Notify.warning('Too many matches found. Please enter a more specific name');
+      if (result.length > 10) {
+        Notiflix.Notify.warning('Too many matches found. Please enter a more specific name');
         return;
       }
       foundCountries(result);
@@ -30,14 +34,14 @@ inputElem.addEventListener('input', debounce(handlerCountrySearch, DEBOUNCE_DELA
       .catch(error => {
         countryListElem.innerHTML = '';
         countryInfoElem.innerHTML = '';
-        Notify.failure('Oops, there is no country with that name');
+        Notiflix.Notify.failure('Oops, there is no country with that name');
       })
   };
 
 
 function foundCountries(result) {
   let inputData = result.length;
-  
+
 }
 /*
 1+.  https://restcountries.com/v3.1/name/{name}
