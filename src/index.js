@@ -1,22 +1,55 @@
 import './css/styles.css';
-import { fetchCountries } from './js/fetchCountries';
+import { fetchCountries } from './fetchCountries';
 import debounce from 'lodash.debounce';
 import Notiflix from 'notiflix';
 
+
 const DEBOUNCE_DELAY = 300;
 
+const inputElem = document.querySelector('#search-box');
+const countryListElem = document.querySelector('.country-list');
+const countryInfoElem = document.querySelector('.country-info');
 
+inputElem.addEventListener('input', debounce(handlerCountrySearch, DEBOUNCE_DELAY)),
+
+  function handlerCountrySearch(e) {
+    e.preventDefault();
+
+    const searchedCountry = e.target.value.trim();
+    if (searchedCountry === '') {
+      return
+    }
+    fetchCountries(searchedCountry)
+      .then(result => {
+      if (result.lenght > 10) {
+        Notify.warning('Too many matches found. Please enter a more specific name');
+        return;
+      }
+      foundCountries(result);
+    })
+      .catch(error => {
+        countryListElem.innerHTML = '';
+        countryInfoElem.innerHTML = '';
+        Notify.failure('Oops, there is no country with that name');
+      })
+  };
+
+
+function foundCountries(result) {
+  let inputData = result.length;
+  
+}
 /*
-1.  https://restcountries.com/v3.1/name/{name}
+1+.  https://restcountries.com/v3.1/name/{name}
 Використовуй публічний API Rest Countries v2, а саме ресурс name, який повертає масив об'єктів країн,
 що задовольнили критерій пошуку.
 
 2. Додай мінімальне оформлення елементів інтерфейсу.
 
-3. Напиши функцію fetchCountries(name), яка робить HTTP-запит на ресурс name і повертає проміс з масивом країн
+3+. Напиши функцію fetchCountries(name), яка робить HTTP-запит на ресурс name і повертає проміс з масивом країн
  - результатом запиту.
 
- 4. Винеси її в окремий файл fetchCountries.js і зроби іменований експорт.
+ 4+. Винеси її в окремий файл fetchCountries.js і зроби іменований експорт.
  5. Щоб скоротити обсяг переданих даних, додай рядок параметрів запиту - таким чином цей бекенд реалізує фільтрацію полів.
  Ознайомся з документацією синтаксису фільтрів.
 
@@ -37,7 +70,7 @@ const DEBOUNCE_DELAY = 300;
 
   8. Якщо користувач повністю очищає поле пошуку, то HTTP-запит не виконується, а розмітка списку країн або інформації про країну зникає.
 
-  9. Виконай санітизацію введеного рядка методом trim(), це вирішить проблему, коли в полі введення тільки пробіли, або вони є на початку і в кінці рядка.
+  9+. Виконай санітизацію введеного рядка методом trim(), це вирішить проблему, коли в полі введення тільки пробіли, або вони є на початку і в кінці рядка.
 
   10. Якщо у відповіді бекенд повернув більше ніж 10 країн, в інтерфейсі з'являється повідомлення про те, що назва повинна бути специфічнішою.
   Для повідомлень використовуй бібліотеку notiflix і виводь такий рядок "Too many matches found. Please enter a more specific name.".
