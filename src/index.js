@@ -1,28 +1,40 @@
+//імпорти
+
 import './css/styles.css';
 import { fetchCountries } from './fetchCountries';
 import debounce from 'lodash.debounce';
 import Notiflix from 'notiflix';
 
-
+//елементи та змінні
 const DEBOUNCE_DELAY = 300;
 
 const inputElem = document.querySelector('#search-box');
 const countryListElem = document.querySelector('.country-list');
 const countryInfoElem = document.querySelector('.country-info');
 
-inputElem.addEventListener('input', debounce(handlerCountrySearch, DEBOUNCE_DELAY, { trailing: true })),
+//слухач на input
 
+inputElem.addEventListener('input', debounce(handlerCountrySearch, DEBOUNCE_DELAY, { trailing: true }));
+
+  //функція на введення із debounce
   function handlerCountrySearch(e) {
+
+    //заборона перевантаження сторінки
     e.preventDefault();
 
-    const searchedCountry = e.target.value.trim();
 
+    //у місці введення беремо дані
+    const searchedCountry = e.target.value.trim();
+    // countryListElem.innerHTML = '';
+    // countryInfoElem.innerHTML = '';
+    //якщо порожня стрічка виходимо
     if (searchedCountry == '') {
       countryListElem.innerHTML = '';
       countryInfoElem.innerHTML = '';
       return
     }
 
+    //запуск функції із зовнішнього файлу, яка приймає введені дані
     fetchCountries(searchedCountry)
       .then(result => {
       if (result.length > 10) {
@@ -38,11 +50,41 @@ inputElem.addEventListener('input', debounce(handlerCountrySearch, DEBOUNCE_DELA
       })
   };
 
-
+//приймаємо результати
 function foundCountries(result) {
+  //перевіряємо кількість знайдених даних
   let inputData = result.length;
 
-}
+  //якщо знайдено від 2-10, ми виводимо просту розмітку
+  if (inputData >= 2 && inputData <= 10) {
+    const mark = result
+    .map(res => {
+      return `<li>
+      <img src="${res.flags.svg}" alt="Flag of ${res.name.official}" width="30" hight="20">
+        <p><b>${res.name.official}</b></p>
+      </li>`;
+    })
+    .join('');
+    countryListElem.innerHTML = mark;
+
+  //якщо знайдено 1 результат, ми виводимо розширену розмітку
+        } else if (inputData === 1) {
+
+    const mark = result
+    .map(res => {
+      return `<li>
+      <img src="${res.flags.svg}" alt="Flag of ${res.name.official}" width="30" hight="20">
+        <p><b>${res.name.official}</b></p>
+        <p><b>Capital</b>: ${res.capital}</p>
+        <p><b>Population</b>: ${res.population}</p>
+        <p><b>Languages</b>: ${Object.values(res.languages)} </p>
+      </li>`;
+    })
+    .join('');
+    countryListElem.innerHTML = mark;
+        }
+
+};
 /*
 1+.  https://restcountries.com/v3.1/name/{name}
 Використовуй публічний API Rest Countries v2, а саме ресурс name, який повертає масив об'єктів країн,
