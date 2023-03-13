@@ -25,10 +25,10 @@ inputElem.addEventListener('input', debounce(handlerCountrySearch, DEBOUNCE_DELA
 
     //у місці введення беремо дані
     const searchedCountry = e.target.value.trim();
-    // countryListElem.innerHTML = '';
-    // countryInfoElem.innerHTML = '';
+    countryListElem.innerHTML = '';
+    countryInfoElem.innerHTML = '';
     //якщо порожня стрічка виходимо
-    if (searchedCountry == '') {
+    if (!searchedCountry) {
       countryListElem.innerHTML = '';
       countryInfoElem.innerHTML = '';
       return
